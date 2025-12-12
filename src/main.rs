@@ -1,7 +1,7 @@
-use redoxide::target::{OpenAITarget, Target};
 use redoxide::evaluator::{Evaluator, KeywordEvaluator, LLMJudge};
 use redoxide::runner::Runner;
 use redoxide::strategy::{JailbreakStrategy, PayloadSplittingStrategy, ResearchStrategy, Strategy};
+use redoxide::target::{OpenAITarget, Target};
 
 use clap::{Parser, Subcommand, ValueEnum};
 use colored::*;
