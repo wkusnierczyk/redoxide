@@ -71,7 +71,7 @@ red_oxide/
 ### Build
 ```bash
 # Clone the repository
-git clone [https://github.com/wkusnierczyk/redoxide.git](https://github.com/wkusnierczyk/redoxide.git)
+git clone https://github.com/wkusnierczyk/redoxide.git
 cd red_oxide
 
 # Build release binary
