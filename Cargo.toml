@@ -1,8 +1,8 @@
 [package]
 name = "redoxide"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
-description = "RedOxide: An Open Source LLM Red Teaming Suite"
+description = "RedOxide: LLM Red Teaming"
 authors = ["Waclaw Kusnierczyk <waclaw.kusnierczyk@gmail.com>"]
 license = "MIT"
 repository = "https://github.com/wkusnierczyk/redoxide"
