@@ -13,6 +13,6 @@ pub type RedOxideResult<T> = anyhow::Result<T>;
 pub struct AttackResult {
     pub prompt: String,
     pub response: String,
-    pub success: bool, // True if the model was successfully attacked (unsafe)
+    pub success: bool, // True if the model was successfully attacked
     pub strategy_name: String,
 }
