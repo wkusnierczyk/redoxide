@@ -89,6 +89,8 @@ Run the tool using `cargo run` or the compiled binary.
 The primary command is `scan`. By default, it runs a basic jailbreak test against `gpt-3.5-turbo`.
 
 ```bash
+export OPENAI_API_KEY=<your-api-key>
+
 # Run a basic scan
 cargo run -- scan
 ```
