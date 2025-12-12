@@ -110,7 +110,7 @@ cargo run -- scan
 
 ```bash
 # Attack using a file of prompts with the "Payload Splitting" strategy
-cargo run -- scan --file attacks.txt --strategy splitting
+cargo run -- scan --file attacks/simple.txt --strategy splitting
 
 # Use GPT-4 as a judge for higher accuracy (slower/costlier)
 cargo run -- scan --use-judge --model gpt-4
@@ -121,6 +121,9 @@ cargo run -- scan --use-judge --model gpt-4
 1.  **Jailbreak**: Wraps prompts in templates like "DAN" (Do Anything Now) or fictional storytelling frames.
 2.  **Splitting**: Obfuscates keywords (e.g., "B-O-M-B") to bypass simple blocklists.
 3.  **Research**: Frames the malicious request as a theoretical or educational inquiry.
+
+**Note**  
+You can add your strategy by implementing the `Strategy` trait in `src/strategy.rs`.
 
 ### <a name="evaluators"></a>Evaluators
 
