@@ -33,9 +33,9 @@ RedOxide mimics the architecture of professional security tools but remains ligh
 Red Teaming in the context of AI involves actively attempting to "break" or bypass the safety filters of an LLM. The goal is to elicit harmful, unethical, or illegal responses (e.g., bomb-making instructions, hate speech) to identify vulnerabilities before bad actors do.
 
 **Popular References:**
-* **Lakera Red Team**: A leading commercial platform for AI security.
-* **Garak**: An open-source LLM vulnerability scanner (Python-based).
-* **AdvBench**: A dataset of adversarial prompts used for academic benchmarks.
+* [**Lakera Red Team**](https://www.lakera.ai/lakera-red): A leading commercial platform for AI security.
+* [**Garak**](https://garak.ai/): An open-source LLM vulnerability scanner (Python-based).
+* [**AdvBench**](https://www.techrxiv.org/users/937080/articles/1356622-advbench-a-comprehensive-benchmark-of-adversarial-attacks-on-deepfake-detectors-in-real-world-consumer-applications): A dataset of adversarial prompts used for academic benchmarks.
 
 RedOxide provides a Rust-native alternative that focuses on speed and developer extensibility.
 
