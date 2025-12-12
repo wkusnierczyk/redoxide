@@ -33,9 +33,9 @@ RedOxide mimics the architecture of professional security tools but remains ligh
 Red Teaming in the context of AI involves actively attempting to "break" or bypass the safety filters of an LLM. The goal is to elicit harmful, unethical, or illegal responses (e.g., bomb-making instructions, hate speech) to identify vulnerabilities before bad actors do.
 
 **Popular References:**
-* **Lakera Red Team**: A leading commercial platform for AI security.
-* **Garak**: An open-source LLM vulnerability scanner (Python-based).
-* **AdvBench**: A dataset of adversarial prompts used for academic benchmarks.
+* [**Lakera Red Team**](https://www.lakera.ai/lakera-red): A leading commercial platform for AI security.
+* [**Garak**](https://garak.ai/): An open-source LLM vulnerability scanner (Python-based).
+* [**AdvBench**](https://www.techrxiv.org/users/937080/articles/1356622-advbench-a-comprehensive-benchmark-of-adversarial-attacks-on-deepfake-detectors-in-real-world-consumer-applications): A dataset of adversarial prompts used for academic benchmarks.
 
 RedOxide provides a Rust-native alternative that focuses on speed and developer extensibility.
 
@@ -71,7 +71,7 @@ red_oxide/
 ### Build
 ```bash
 # Clone the repository
-git clone [https://github.com/your-username/red_oxide.git](https://github.com/your-username/red_oxide.git)
+git clone https://github.com/wkusnierczyk/redoxide.git
 cd red_oxide
 
 # Build release binary
@@ -89,6 +89,8 @@ Run the tool using `cargo run` or the compiled binary.
 The primary command is `scan`. By default, it runs a basic jailbreak test against `gpt-3.5-turbo`.
 
 ```bash
+export OPENAI_API_KEY=<your-api-key>
+
 # Run a basic scan
 cargo run -- scan
 ```
@@ -108,7 +110,7 @@ cargo run -- scan
 
 ```bash
 # Attack using a file of prompts with the "Payload Splitting" strategy
-cargo run -- scan --file attacks.txt --strategy splitting
+cargo run -- scan --file attacks/simple.txt --strategy splitting
 
 # Use GPT-4 as a judge for higher accuracy (slower/costlier)
 cargo run -- scan --use-judge --model gpt-4
@@ -119,6 +121,9 @@ cargo run -- scan --use-judge --model gpt-4
 1.  **Jailbreak**: Wraps prompts in templates like "DAN" (Do Anything Now) or fictional storytelling frames.
 2.  **Splitting**: Obfuscates keywords (e.g., "B-O-M-B") to bypass simple blocklists.
 3.  **Research**: Frames the malicious request as a theoretical or educational inquiry.
+
+**Note**  
+You can add your strategy by implementing the `Strategy` trait in `src/strategy.rs`.
 
 ### <a name="evaluators"></a>Evaluators
 
