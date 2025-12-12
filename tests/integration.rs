@@ -32,7 +32,7 @@ async fn test_full_scan_pipeline() {
     let evaluator = Arc::new(KeywordEvaluator::default());
 
     // B. Run the actual Runner logic
-    let runner = Runner::new(2); // Concurrency 2
+    let runner = Runner::new(2, true); // Concurrency 2
     let results = runner.run(target, strategy, evaluator).await.unwrap();
 
     // C. Assertions
@@ -56,7 +56,7 @@ async fn test_vulnerable_model_detection() {
     let strategy = Arc::new(JailbreakStrategy::new(vec!["evil prompt".to_string()]));
     let evaluator = Arc::new(KeywordEvaluator::default());
 
-    let runner = Runner::new(2);
+    let runner = Runner::new(2, true);
     let results = runner.run(target, strategy, evaluator).await.unwrap();
 
     // All results should be success: true (Unsafe)

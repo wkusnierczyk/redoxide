@@ -122,7 +122,7 @@ async fn main() -> anyhow::Result<()> {
             };
 
             // 4. Run
-            let runner = Runner::new(*concurrency);
+            let runner = Runner::new(*concurrency, true);
             let results = runner.run(target, strategy_impl, evaluator).await?;
 
             // 5. Report

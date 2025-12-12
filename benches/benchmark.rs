@@ -35,7 +35,7 @@ fn benchmark_runner(c: &mut Criterion) {
 
             let strategy = Arc::new(HighVolStrategy);
             let evaluator = Arc::new(KeywordEvaluator::default());
-            let runner = Runner::new(50); // High concurrency
+            let runner = Runner::new(50, false); // High concurrency
 
             let _ = runner.run(target, strategy, evaluator).await;
         })

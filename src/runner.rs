@@ -1,3 +1,4 @@
+// src/runner.rs
 use crate::{
     evaluator::Evaluator, strategy::Strategy, target::Target, AttackResult, RedOxideResult,
 };
@@ -8,11 +9,16 @@ use std::sync::Arc;
 
 pub struct Runner {
     concurrency: usize,
+    verbose: bool, // <--- New field
 }
 
 impl Runner {
-    pub fn new(concurrency: usize) -> Self {
-        Self { concurrency }
+    // Update constructor to accept verbosity
+    pub fn new(concurrency: usize, verbose: bool) -> Self {
+        Self {
+            concurrency,
+            verbose,
+        }
     }
 
     pub async fn run(
@@ -21,49 +27,62 @@ impl Runner {
         strategy: Arc<dyn Strategy>,
         evaluator: Arc<dyn Evaluator>,
     ) -> RedOxideResult<Vec<AttackResult>> {
-        println!(
-            "Generating prompts for strategy: {}...",
-            strategy.name().cyan()
-        );
+        // Only print if verbose
+        if self.verbose {
+            println!(
+                "Generating prompts for strategy: {}...",
+                strategy.name().cyan()
+            );
+        }
+
         let prompts = strategy.generate_prompts().await;
-        println!(
-            "Generated {} prompts. Starting scan with concurrency: {}",
-            prompts.len(),
-            self.concurrency
-        );
+
+        if self.verbose {
+            println!(
+                "Generated {} prompts. Starting scan with concurrency: {}",
+                prompts.len(),
+                self.concurrency
+            );
+        }
 
         let results = stream::iter(prompts)
             .map(|prompt| {
                 let target = Arc::clone(&target);
                 let evaluator = Arc::clone(&evaluator);
                 let strategy_name = strategy.name();
+                let verbose = self.verbose; // Capture for closure
 
                 async move {
-                    // 1. Send Request (Handle network errors gracefully)
-                    let response = match target.send_prompt(&prompt).await {
+                    let response_result = target.as_ref().send_prompt(&prompt).await;
+
+                    let response = match response_result {
                         Ok(r) => r,
                         Err(e) => {
-                            eprintln!("Request failed: {}", e);
+                            if verbose {
+                                eprintln!("Request failed: {}", e);
+                            }
                             return None;
                         }
                     };
 
-                    // 2. Evaluate
                     let success = evaluator
+                        .as_ref()
                         .evaluate(&prompt, &response)
                         .await
                         .unwrap_or(false);
 
-                    // 3. Simple logging
-                    if success {
-                        println!(
-                            "\n[{}] {}",
-                            "VULNERABLE".red().bold(),
-                            prompt.chars().take(50).collect::<String>()
-                        );
-                    } else {
-                        print!(".");
-                        io::stdout().flush().ok();
+                    // Conditional logging
+                    if verbose {
+                        if success {
+                            println!(
+                                "\n[{}] {}",
+                                "VULNERABLE".red().bold(),
+                                prompt.chars().take(50).collect::<String>()
+                            );
+                        } else {
+                            print!(".");
+                            io::stdout().flush().ok();
+                        }
                     }
 
                     Some(AttackResult {
@@ -74,12 +93,15 @@ impl Runner {
                     })
                 }
             })
-            .buffer_unordered(self.concurrency) // Run N futures in parallel
-            .filter_map(|x| async { x }) // Filter out failed requests
+            .buffer_unordered(self.concurrency)
+            .filter_map(|x| async { x })
             .collect::<Vec<_>>()
             .await;
 
-        println!("\n{}", "Scan Complete.".bold().white());
+        if self.verbose {
+            println!("\n{}", "Scan Complete.".bold().white());
+        }
+
         Ok(results)
     }
 }
