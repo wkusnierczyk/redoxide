@@ -1,6 +1,6 @@
-# RedOxide: LLM Red Teaming Suite
+![RedOxide](graphics/redoxide-small.png)
 
-RedOxide is a high-performance, modular, and extensible Red Teaming tool written in Rust. 
+**RedOxide** is a high-performance, modular, and extensible LLM Red Teaming tool written in Rust. 
 It is designed to evaluate the safety and robustness of Large Language Models (LLMs) by simulating various adversarial attacks.
 
 
