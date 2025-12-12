@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test_and_bench:
+    name: Test and Benchmark
+    runs-on: ubuntu-latest
+
+    # 1. Specify the environment where your secret is stored
+    environment: sandbox
+
+    # 2. Inject the secret as an environment variable for all steps
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      CARGO_TERM_COLOR: always
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Cache Cargo registry
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: Check Format
+        run: cargo fmt -- --check
+
+      - name: Run Clippy (Linting)
+        run: cargo clippy -- -D warnings
+
+      - name: Run Tests
+        # This runs unit and integration tests
+        run: cargo test --verbose
+
+      - name: Run Benchmarks
+        # This runs the criterion benchmarks defined in benches/
+        run: cargo bench
