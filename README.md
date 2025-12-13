@@ -3,7 +3,9 @@
 **RedOxide** is a high-performance, modular, and extensible LLM Red Teaming tool written in Rust. 
 It is designed to evaluate the safety and robustness of Large Language Models (LLMs) by simulating various adversarial attacks.
 
-`redoxide` is available from [`crates.io`](https://crates.io/crates/redoxide).
+**Note**  
+* The `redoxide` crate is available from [`crates.io`](https://crates.io/crates/redoxide).
+* The `redoxide` documentation is available at [`docs.rs`](https://docs.rs/redoxide).
 
 
 ## Contents
