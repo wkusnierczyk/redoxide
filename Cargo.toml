@@ -1,6 +1,6 @@
 [package]
 name = "redoxide"
-version = "0.1.2"
+version = "0.1.3"
 edition = "2021"
 description = "RedOxide: LLM Red Teaming"
 authors = ["Waclaw Kusnierczyk <waclaw.kusnierczyk@gmail.com>"]
