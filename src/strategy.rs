@@ -14,20 +14,20 @@ pub trait Strategy: Send + Sync {
     /// Returns the display name of the strategy (used for reporting).
     fn name(&self) -> String;
 
-    /// Generates the list of malicious prompts to be executed by the `Runner`.
+    /// Generates the list of malicious prompts to be executed by the Runner.
     async fn generate_prompts(&self) -> Vec<String>;
 }
 
-/// A strategy that wraps prompts in adversarial templates (jailbreaks).
+/// A strategy that wraps prompts in adversarial templates ("Jailbreaks").
 ///
-/// This strategy attempts to bypass safety filters by using role-play,
+/// This strategy attempts to bypass safety filters by using role-play (e.g., DAN),
 /// fictional scenarios, or translation tasks.
 pub struct JailbreakStrategy {
     base_prompts: Vec<String>,
 }
 
 impl JailbreakStrategy {
-    /// Creates a new jailbreak strategy with the given list of harmful questions.
+    /// Creates a new Jailbreak strategy with the given list of harmful questions.
     pub fn new(base_prompts: Vec<String>) -> Self {
         Self { base_prompts }
     }
@@ -169,5 +169,19 @@ mod tests {
         // We expect 4 templates defined in generate_prompts
         assert_eq!(prompts.len(), 4);
         assert!(prompts[1].contains("DAN"));
+    }
+
+    #[tokio::test]
+    async fn test_research_strategy() {
+        let strategy = ResearchStrategy::new(vec!["hack".to_string()]);
+        let prompts = strategy.generate_prompts().await;
+
+        // We expect 3 templates defined in ResearchStrategy
+        assert_eq!(prompts.len(), 3);
+
+        // Verify key phrases from the templates
+        assert!(prompts[0].contains("research paper"));
+        assert!(prompts[1].contains("educational purposes"));
+        assert!(prompts[2].contains("safe, controlled environment"));
     }
 }
