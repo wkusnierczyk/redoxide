@@ -22,6 +22,7 @@ anyhow = "1.0"
 colored = "2.0"
 futures = "0.3"
 dotenv = "0.15"
+reqwest = "0.11.27"
 
 [dev-dependencies]
 criterion = { version = "0.5", features = ["async_tokio"] }
