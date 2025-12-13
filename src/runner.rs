@@ -1,4 +1,8 @@
-// src/runner.rs
+//! The core execution engine for RedOxide.
+//!
+//! The [`Runner`] coordinates the interaction between the [`Strategy`], [`Target`], and [`Evaluator`].
+//! It manages concurrency using Tokio streams to ensure high-throughput testing.
+
 use crate::{
     evaluator::Evaluator, strategy::Strategy, target::Target, AttackResult, RedOxideResult,
 };
@@ -7,13 +11,20 @@ use futures::{stream, StreamExt};
 use std::io::{self, Write};
 use std::sync::Arc;
 
+/// Orchestrates the execution of red teaming scans.
 pub struct Runner {
+    /// The number of concurrent network requests to allow.
     concurrency: usize,
-    verbose: bool, // <--- New field
+    /// Whether to print real-time logs to stdout.
+    verbose: bool,
 }
 
 impl Runner {
-    // Update constructor to accept verbosity
+    /// Creates a new Runner instance.
+    ///
+    /// # Arguments
+    /// * `concurrency` - Max number of parallel futures (e.g., 5 or 10).
+    /// * `verbose` - If true, prints colorful logs and prompts to stdout.
     pub fn new(concurrency: usize, verbose: bool) -> Self {
         Self {
             concurrency,
@@ -21,13 +32,24 @@ impl Runner {
         }
     }
 
+    /// Executes the full scan pipeline.
+    ///
+    /// This method:
+    /// 1. Calls the Strategy to generate all prompts.
+    /// 2. Creates a stream of async tasks.
+    /// 3. Executes the tasks in parallel (up to `concurrency` limit).
+    /// 4. Collects and returns the results.
+    ///
+    /// # Arguments
+    /// * `target` - The AI system to attack. Wrapped in `Arc` for thread safety.
+    /// * `strategy` - The attack logic.
+    /// * `evaluator` - The logic to judge success/failure.
     pub async fn run(
         &self,
         target: Arc<dyn Target>,
         strategy: Arc<dyn Strategy>,
         evaluator: Arc<dyn Evaluator>,
     ) -> RedOxideResult<Vec<AttackResult>> {
-        // Only print if verbose
         if self.verbose {
             println!(
                 "Generating prompts for strategy: {}...",
@@ -50,9 +72,10 @@ impl Runner {
                 let target = Arc::clone(&target);
                 let evaluator = Arc::clone(&evaluator);
                 let strategy_name = strategy.name();
-                let verbose = self.verbose; // Capture for closure
+                let verbose = self.verbose;
 
                 async move {
+                    // Send request using safe reference conversion
                     let response_result = target.as_ref().send_prompt(&prompt).await;
 
                     let response = match response_result {
@@ -65,13 +88,13 @@ impl Runner {
                         }
                     };
 
+                    // Evaluate the response
                     let success = evaluator
                         .as_ref()
                         .evaluate(&prompt, &response)
                         .await
                         .unwrap_or(false);
 
-                    // Conditional logging
                     if verbose {
                         if success {
                             println!(
@@ -80,6 +103,7 @@ impl Runner {
                                 prompt.chars().take(50).collect::<String>()
                             );
                         } else {
+                            // Progress dot for safe responses to avoid clutter
                             print!(".");
                             io::stdout().flush().ok();
                         }
@@ -93,6 +117,7 @@ impl Runner {
                     })
                 }
             })
+            // Use buffer_unordered to run futures in parallel
             .buffer_unordered(self.concurrency)
             .filter_map(|x| async { x })
             .collect::<Vec<_>>()
