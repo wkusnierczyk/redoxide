@@ -5,7 +5,8 @@ It is designed to evaluate the safety and robustness of Large Language Models (L
 
 **Note**  
 * The `redoxide` crate is available from [`crates.io`](https://crates.io/crates/redoxide).
-* The `redoxide` documentation is available at [`docs.rs`](https://docs.rs/redoxide).
+* The `redoxide` documentation is available on [`docs.rs`](https://docs.rs/redoxide).
+* The `redoxide` readme on [GitHub pages](https://wkusnierczyk.github.io/redoxide).
 
 
 ## Contents
