@@ -1,0 +1,51 @@
+name: "CodeQL"
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ "main" ]
+  schedule:
+    - cron: '30 1 * * 0'
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'rust' ]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Initialize CodeQL tools for the scanned languages
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+
+      # ------------------------------------------------------------------
+      # Autobuild attempts to build any compiled languages (C/C++, C#, Go, Java, Swift).
+      # If this step fails, comment it out and uncomment the "Manual Build" step.
+      # ------------------------------------------------------------------
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      # ℹ️ If Autobuild fails, uncomment the following three lines:
+      # - name: Manual Build
+      #   run: |
+      #     cargo build --release
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{matrix.language}}"
